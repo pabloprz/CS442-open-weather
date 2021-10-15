@@ -13,16 +13,33 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.iit.pab.openweather.utils.LocationDetails;
+import com.iit.pab.openweather.utils.LocationUtils;
+
 public class MainActivity extends AppCompatActivity {
 
     private boolean online;
     private TempUnit chosenUnit;
+    private LocationDetails location;
+    private TextView locationView;
+    private TextView dateTimeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        locationView = findViewById(R.id.locationView);
+        dateTimeView = findViewById(R.id.dateTimeView);
+
         checkNetworkConnection();
+
+        if (online) {
+            location = LocationUtils.getLocationName("Chicago", this);
+            if (location != null) {
+                locationView.setText(location.getName());
+            }
+
+        }
 
         // TODO add settings
         this.chosenUnit = TempUnit.IMPERIAL;
@@ -64,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkNetworkConnection() {
         online = hasNetworkConnection();
         if (!online) {
-            ((TextView) findViewById(R.id.dateTimeView)).setText(R.string.no_connection);
+            dateTimeView.setText(R.string.no_connection);
         }
     }
 
