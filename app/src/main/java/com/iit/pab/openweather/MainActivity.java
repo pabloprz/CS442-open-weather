@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat;
 
 import com.iit.pab.openweather.utils.LocationDetails;
 import com.iit.pab.openweather.utils.LocationUtils;
+import com.iit.pab.openweather.utils.TempUnit;
+import com.iit.pab.openweather.utils.WeatherLoaderRunnable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         locationView = findViewById(R.id.locationView);
         dateTimeView = findViewById(R.id.dateTimeView);
 
+        // TODO add settings
+        this.chosenUnit = TempUnit.IMPERIAL;
+
         checkNetworkConnection();
 
         if (online) {
@@ -38,11 +43,9 @@ public class MainActivity extends AppCompatActivity {
             if (location != null) {
                 locationView.setText(location.getName());
             }
-
+            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit);
+            new Thread(runnable).start();
         }
-
-        // TODO add settings
-        this.chosenUnit = TempUnit.IMPERIAL;
     }
 
     @Override
