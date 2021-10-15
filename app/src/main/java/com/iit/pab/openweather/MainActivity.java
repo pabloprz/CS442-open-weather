@@ -1,22 +1,28 @@
 package com.iit.pab.openweather;
 
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
 public class MainActivity extends AppCompatActivity {
 
+    private boolean online;
     private TempUnit chosenUnit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkNetworkConnection();
 
         // TODO add settings
         this.chosenUnit = TempUnit.IMPERIAL;
@@ -31,16 +37,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.units_toggle) {
-            // Toggle default unit
-            this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC : TempUnit.IMPERIAL;
-            changeIcon(item);
-        } else if (item.getItemId() == R.id.daily_show) {
-            // Move to daily activity
-            Intent intent = new Intent(this, DailyForecastActivity.class);
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.location_change) {
-            // TODO Change location
+        if (online) {
+            if (item.getItemId() == R.id.units_toggle) {
+                // Toggle default unit
+                this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC : TempUnit.IMPERIAL;
+                changeIcon(item);
+            } else if (item.getItemId() == R.id.daily_show) {
+                // Move to daily activity
+                Intent intent = new Intent(this, DailyForecastActivity.class);
+                startActivity(intent);
+            } else if (item.getItemId() == R.id.location_change) {
+                // TODO Change location
+            }
+        } else {
+            Toast.makeText(this, R.string.not_available_offline, Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -49,5 +59,18 @@ public class MainActivity extends AppCompatActivity {
     private void changeIcon(MenuItem menuItem) {
         menuItem.setIcon(ContextCompat.getDrawable(this,
                 this.chosenUnit.equals(TempUnit.IMPERIAL) ? R.drawable.units_f : R.drawable.units_c));
+    }
+
+    private void checkNetworkConnection() {
+        online = hasNetworkConnection();
+        if (!online) {
+            ((TextView) findViewById(R.id.dateTimeView)).setText(R.string.no_connection);
+        }
+    }
+
+    private boolean hasNetworkConnection() {
+        ConnectivityManager connectivityManager = getSystemService(ConnectivityManager.class);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 }

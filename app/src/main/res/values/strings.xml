@@ -3,4 +3,6 @@
     <string name="toggle_units">Toggle units</string>
     <string name="show_daily_forecast">Show daily forecast</string>
     <string name="change_location">Change location</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="not_available_offline">Option not available offline</string>
 </resources>
