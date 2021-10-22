@@ -5,4 +5,8 @@
     <string name="change_location">Change location</string>
     <string name="no_connection">No internet connection</string>
     <string name="not_available_offline">Option not available offline</string>
+    <string name="morningTime">8am</string>
+    <string name="dayTime">1pm</string>
+    <string name="eveningTime">5pm</string>
+    <string name="nightTime">11pm</string>
 </resources>

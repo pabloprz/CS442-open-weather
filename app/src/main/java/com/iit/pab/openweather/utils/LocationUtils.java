@@ -9,7 +9,7 @@ import java.util.List;
 
 public class LocationUtils {
 
-    public static LocationDetails getLocationName(String userProvidedLocation, Activity context) {
+    public static LocationDetails getLocationDetails(String userProvidedLocation, Activity context) {
         Geocoder geocoder = new Geocoder(context);
         try {
             List<Address> address =
@@ -19,8 +19,8 @@ public class LocationUtils {
                 return null;
             }
             String country = address.get(0).getCountryCode();
-            String p1 = "";
-            String p2 = "";
+            String p1;
+            String p2;
             if (country.equals("US")) {
                 p1 = address.get(0).getLocality();
                 p2 = address.get(0).getAdminArea();

@@ -13,10 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.iit.pab.openweather.utils.DirectionUtils;
 import com.iit.pab.openweather.utils.LocationDetails;
-import com.iit.pab.openweather.utils.LocationUtils;
+import com.iit.pab.openweather.utils.LocationLoaderRunnable;
 import com.iit.pab.openweather.utils.TempUnit;
 import com.iit.pab.openweather.utils.WeatherLoaderRunnable;
+import com.iit.pab.openweather.weather.Weather;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private LocationDetails location;
     private TextView locationView;
     private TextView dateTimeView;
+    private Weather weather;
+
+    // TODO check all project exceptions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +48,7 @@ public class MainActivity extends AppCompatActivity {
         checkNetworkConnection();
 
         if (online) {
-            location = LocationUtils.getLocationName("Chicago", this);
-            if (location != null) {
-                locationView.setText(location.getName());
-            }
-            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit);
-            new Thread(runnable).start();
+            new Thread(new LocationLoaderRunnable("Chicago, IL", this)).start();
         }
     }
 
@@ -76,6 +80,40 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void updateData(Weather weather) {
+        this.weather = weather;
+
+        if (weather == null) {
+            Toast.makeText(this, "Please Enter a Valid City Name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        TextView dateTime = findViewById(R.id.dateTimeView);
+        dateTime.setText(formatDate(weather.getDateTime()));
+
+        TextView temp = findViewById(R.id.tempView);
+        temp.setText(String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), weather.getTemperature()));
+
+        TextView feelsLike = findViewById(R.id.feelsLikeView);
+        feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + getTempUnit(), weather.getFeelsLike()));
+
+        TextView description = findViewById(R.id.weatherDescriptionView);
+        description.setText(String.format(Locale.getDefault(), "%s%s",
+                weather.getDetails().getDescription().substring(0, 1).toUpperCase(),
+                weather.getDetails().getDescription().substring(1)));
+
+        TextView winds = findViewById(R.id.windsView);
+        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
+                DirectionUtils.getDirection(weather.getWindDegree()),
+                weather.getWindSpeed(), getSpeedUnit()));
+
+        TextView humidity = findViewById(R.id.humidityView);
+        humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%", weather.getHumidity()));
+
+        TextView uvIndex = findViewById(R.id.uvIndexView);
+        uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
+    }
+
     private void changeIcon(MenuItem menuItem) {
         menuItem.setIcon(ContextCompat.getDrawable(this,
                 this.chosenUnit.equals(TempUnit.IMPERIAL) ? R.drawable.units_f : R.drawable.units_c));
@@ -92,5 +130,28 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = getSystemService(ConnectivityManager.class);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    public void locationDetailsArrived(LocationDetails locationDetails) {
+        location = locationDetails;
+        if (location != null) {
+            locationView.setText(location.getName());
+            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit);
+            new Thread(runnable).start();
+        }
+    }
+
+    private String formatDate(LocalDateTime ldt) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEE MMM dd h:mm a, yyyy",
+                Locale.getDefault());
+        return ldt.format(dtf);
+    }
+
+    private String getTempUnit() {
+        return chosenUnit == TempUnit.IMPERIAL ? "F" : "C";
+    }
+
+    private String getSpeedUnit() {
+        return chosenUnit == TempUnit.IMPERIAL ? "mph" : "kmh";
     }
 }
