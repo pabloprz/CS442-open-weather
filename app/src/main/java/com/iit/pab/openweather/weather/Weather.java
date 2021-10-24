@@ -1,6 +1,7 @@
 package com.iit.pab.openweather.weather;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Weather {
@@ -32,8 +33,8 @@ public class Weather {
     private Double rain;
     private Double snow;
 
-    private List<HourlyDetails> hourlyDetails;
-    private List<DailyDetails> dailyDetails;
+    private List<HourlyDetails> hourlyDetails = new ArrayList<>();
+    private List<DailyDetails> dailyDetails = new ArrayList<>();
 
     public double getLatitude() {
         return latitude;

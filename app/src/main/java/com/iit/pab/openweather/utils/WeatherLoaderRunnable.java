@@ -3,9 +3,13 @@ package com.iit.pab.openweather.utils;
 import android.net.Uri;
 
 import com.iit.pab.openweather.MainActivity;
+import com.iit.pab.openweather.weather.DailyDetails;
+import com.iit.pab.openweather.weather.HourlyDetails;
+import com.iit.pab.openweather.weather.TemperatureDetails;
 import com.iit.pab.openweather.weather.Weather;
 import com.iit.pab.openweather.weather.WeatherDetails;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,7 +31,8 @@ public class WeatherLoaderRunnable implements Runnable {
     private static final String DATA_URL = "https://api.openweathermap.org/data/2.5/onecall";
     private static final String API_KEY = "b9bd7fe955df909c89670c86bea812f9";
 
-    public WeatherLoaderRunnable(MainActivity mainActivity, LocationDetails location, TempUnit tempUnit) {
+    public WeatherLoaderRunnable(MainActivity mainActivity, LocationDetails location,
+                                 TempUnit tempUnit) {
         this.mainActivity = mainActivity;
         this.location = location;
         this.tempUnit = tempUnit;
@@ -84,11 +89,15 @@ public class WeatherLoaderRunnable implements Runnable {
 
             weather = new Weather();
 
+            // Info fields
             weather.setLatitude(jObjMain.getDouble("lat"));
             weather.setLongitude(jObjMain.getDouble("lon"));
             weather.setTimezone(jObjMain.getString("timezone"));
-            weather.setOffset(jObjMain.getInt("timezone_offset"));
 
+            int offset = jObjMain.getInt("timezone_offset");
+            weather.setOffset(offset);
+
+            // Current data
             JSONObject current = jObjMain.getJSONObject("current");
             weather.setDateTime(getLocalDateTime(current.getInt("dt"), weather.getOffset()));
             weather.setSunrise(getLocalDateTime(current.getInt("sunrise"), weather.getOffset()));
@@ -109,9 +118,8 @@ public class WeatherLoaderRunnable implements Runnable {
             }
 
             JSONObject details = (JSONObject) current.getJSONArray("weather").get(0);
-            weather.setDetails(new WeatherDetails(details.getInt("id"),
-                    details.getString("main"), details.getString("description"),
-                    details.getString("icon")));
+            weather.setDetails(new WeatherDetails(details.getInt("id"), details.getString("main")
+                    , details.getString("description"), details.getString("icon")));
 
             if (isPresent(current, "rain")) {
                 weather.setRain(details.getJSONObject("rain").getDouble("1h"));
@@ -119,6 +127,28 @@ public class WeatherLoaderRunnable implements Runnable {
 
             if (isPresent(current, "snow")) {
                 weather.setRain(details.getJSONObject("snow").getDouble("1h"));
+            }
+
+            // Hourly data
+            JSONArray hourly = jObjMain.getJSONArray("hourly");
+            for (int i = 0; i < hourly.length(); i++) {
+                JSONObject h = hourly.getJSONObject(i);
+                weather.getHourlyDetails().add(new HourlyDetails(getLocalDateTime(h.getInt("dt"),
+                        offset), h.getDouble("temp"), getWeatherDetails(h), h.getDouble("pop")));
+            }
+
+            // Daily data
+            JSONArray daily = jObjMain.getJSONArray("daily");
+            for (int i = 0; i < daily.length(); i++) {
+                JSONObject d = daily.getJSONObject(i);
+                JSONObject tempObject = d.getJSONObject("temp");
+                TemperatureDetails tDetails = new TemperatureDetails(tempObject.getDouble("day"),
+                        tempObject.getDouble("night"), tempObject.getDouble("eve"),
+                        tempObject.getDouble("morn"), tempObject.getDouble("min"),
+                        tempObject.getDouble("max"));
+                weather.getDailyDetails().add(new DailyDetails(getLocalDateTime(d.getInt("dt"),
+                        offset), tDetails, getWeatherDetails(d), d.getDouble("pop"), d.getDouble(
+                                "uvi")));
             }
 
         } catch (JSONException e) {
@@ -129,11 +159,16 @@ public class WeatherLoaderRunnable implements Runnable {
     }
 
     private LocalDateTime getLocalDateTime(long epochSecond, int offset) {
-        return LocalDateTime.ofEpochSecond(
-                epochSecond + offset, 0, ZoneOffset.UTC);
+        return LocalDateTime.ofEpochSecond(epochSecond + offset, 0, ZoneOffset.UTC);
     }
 
     private boolean isPresent(JSONObject object, String field) {
         return object.has(field) && !object.isNull(field);
+    }
+
+    private WeatherDetails getWeatherDetails(JSONObject obj) throws JSONException {
+        JSONObject weatherObject = (JSONObject) obj.getJSONArray("weather").get(0);
+        return new WeatherDetails(weatherObject.getInt("id"), weatherObject.getString("main"),
+                weatherObject.getString("description"), weatherObject.getString("icon"));
     }
 }

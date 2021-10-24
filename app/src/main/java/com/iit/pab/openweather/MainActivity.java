@@ -18,6 +18,7 @@ import com.iit.pab.openweather.utils.LocationDetails;
 import com.iit.pab.openweather.utils.LocationLoaderRunnable;
 import com.iit.pab.openweather.utils.TempUnit;
 import com.iit.pab.openweather.utils.WeatherLoaderRunnable;
+import com.iit.pab.openweather.weather.TemperatureDetails;
 import com.iit.pab.openweather.weather.Weather;
 
 import java.time.LocalDateTime;
@@ -64,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         if (online) {
             if (item.getItemId() == R.id.units_toggle) {
                 // Toggle default unit
-                this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC : TempUnit.IMPERIAL;
+                this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC :
+                        TempUnit.IMPERIAL;
                 changeIcon(item);
             } else if (item.getItemId() == R.id.daily_show) {
                 // Move to daily activity
@@ -92,10 +94,11 @@ public class MainActivity extends AppCompatActivity {
         dateTime.setText(formatDate(weather.getDateTime()));
 
         TextView temp = findViewById(R.id.tempView);
-        temp.setText(String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), weather.getTemperature()));
+        temp.setText(tempToText(weather.getTemperature()));
 
         TextView feelsLike = findViewById(R.id.feelsLikeView);
-        feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + getTempUnit(), weather.getFeelsLike()));
+        feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + getTempUnit(),
+                weather.getFeelsLike()));
 
         TextView description = findViewById(R.id.weatherDescriptionView);
         description.setText(String.format(Locale.getDefault(), "%s%s",
@@ -104,19 +107,36 @@ public class MainActivity extends AppCompatActivity {
 
         TextView winds = findViewById(R.id.windsView);
         winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
-                DirectionUtils.getDirection(weather.getWindDegree()),
-                weather.getWindSpeed(), getSpeedUnit()));
+                DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(),
+                getSpeedUnit()));
 
         TextView humidity = findViewById(R.id.humidityView);
-        humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%", weather.getHumidity()));
+        humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%",
+                weather.getHumidity()));
 
         TextView uvIndex = findViewById(R.id.uvIndexView);
         uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
+
+        TemperatureDetails tempDetails = weather.getDailyDetails().get(0).getTemperature();
+
+        TextView morn = findViewById(R.id.morningView);
+        morn.setText(tempToText(tempDetails.getMorning()));
+        TextView day = findViewById(R.id.dayView);
+        day.setText(tempToText(tempDetails.getDay()));
+        TextView eve = findViewById(R.id.eveningView);
+        eve.setText(tempToText(tempDetails.getEvening()));
+        TextView night = findViewById(R.id.nightView);
+        night.setText(tempToText(tempDetails.getNight()));
+    }
+
+    private String tempToText(double temp) {
+        return String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), temp);
     }
 
     private void changeIcon(MenuItem menuItem) {
         menuItem.setIcon(ContextCompat.getDrawable(this,
-                this.chosenUnit.equals(TempUnit.IMPERIAL) ? R.drawable.units_f : R.drawable.units_c));
+                this.chosenUnit.equals(TempUnit.IMPERIAL) ? R.drawable.units_f :
+                        R.drawable.units_c));
     }
 
     private void checkNetworkConnection() {
