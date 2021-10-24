@@ -28,14 +28,16 @@ public class WeatherLoaderRunnable implements Runnable {
     private final MainActivity mainActivity;
     private final LocationDetails location;
     private final TempUnit tempUnit;
+    private final Weather weather;
     private static final String DATA_URL = "https://api.openweathermap.org/data/2.5/onecall";
     private static final String API_KEY = "b9bd7fe955df909c89670c86bea812f9";
 
     public WeatherLoaderRunnable(MainActivity mainActivity, LocationDetails location,
-                                 TempUnit tempUnit) {
+                                 TempUnit tempUnit, Weather weather) {
         this.mainActivity = mainActivity;
         this.location = location;
         this.tempUnit = tempUnit;
+        this.weather = weather;
     }
 
     @Override
@@ -82,12 +84,8 @@ public class WeatherLoaderRunnable implements Runnable {
     }
 
     private Weather parseJson(String s) {
-        Weather weather = null;
-
         try {
             JSONObject jObjMain = new JSONObject(s);
-
-            weather = new Weather();
 
             // Info fields
             weather.setLatitude(jObjMain.getDouble("lat"));

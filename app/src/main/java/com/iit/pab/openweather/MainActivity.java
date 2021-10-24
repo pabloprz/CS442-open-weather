@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.iit.pab.openweather.utils.DirectionUtils;
 import com.iit.pab.openweather.utils.LocationDetails;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView locationView;
     private TextView dateTimeView;
     private Weather weather;
+    private RecyclerView hourlyRecyclerView;
+    private HourlyAdapter hourlyAdapter;
 
     // TODO check all project exceptions
 
@@ -42,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         locationView = findViewById(R.id.locationView);
         dateTimeView = findViewById(R.id.dateTimeView);
+
+        weather = new Weather();
+        hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this);
+        hourlyRecyclerView = findViewById(R.id.hourlyView);
+        hourlyRecyclerView.setAdapter(hourlyAdapter);
+        hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
 
         // TODO add settings
         this.chosenUnit = TempUnit.IMPERIAL;
@@ -134,9 +145,11 @@ public class MainActivity extends AppCompatActivity {
         eve.setText(tempToText(tempDetails.getEvening()));
         TextView night = findViewById(R.id.nightView);
         night.setText(tempToText(tempDetails.getNight()));
+
+        hourlyAdapter.notifyDataSetChanged();
     }
 
-    private String tempToText(double temp) {
+    public String tempToText(double temp) {
         return String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), temp);
     }
 
@@ -163,7 +176,8 @@ public class MainActivity extends AppCompatActivity {
         location = locationDetails;
         if (location != null) {
             locationView.setText(location.getName());
-            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit);
+            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit
+                    , weather);
             new Thread(runnable).start();
         }
     }
@@ -174,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         return ldt.format(dtf);
     }
 
-    private String formatTime(LocalDateTime ldt) {
+    public String formatTime(LocalDateTime ldt) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
         return ldt.format(dtf);
     }

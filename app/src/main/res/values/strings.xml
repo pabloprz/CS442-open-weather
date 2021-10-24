@@ -9,4 +9,5 @@
     <string name="dayTime">1pm</string>
     <string name="eveningTime">5pm</string>
     <string name="nightTime">11pm</string>
+    <string name="today">Today</string>
 </resources>
