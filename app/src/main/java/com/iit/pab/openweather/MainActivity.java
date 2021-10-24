@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView dateTime = findViewById(R.id.dateTimeView);
-        dateTime.setText(formatDate(weather.getDateTime()));
+        dateTime.setText(formatDateTime(weather.getDateTime()));
 
         TextView temp = findViewById(R.id.tempView);
         temp.setText(tempToText(weather.getTemperature()));
@@ -117,8 +117,15 @@ public class MainActivity extends AppCompatActivity {
         TextView uvIndex = findViewById(R.id.uvIndexView);
         uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
 
-        TemperatureDetails tempDetails = weather.getDailyDetails().get(0).getTemperature();
+        TextView sunrise = findViewById(R.id.sunrise);
+        sunrise.setText(String.format(Locale.getDefault(), "Sunrise: %s",
+                formatTime(weather.getSunrise())));
 
+        TextView sunset = findViewById(R.id.sunset);
+        sunset.setText(String.format(Locale.getDefault(), "Sunset: %s",
+                formatTime(weather.getSunset())));
+
+        TemperatureDetails tempDetails = weather.getDailyDetails().get(0).getTemperature();
         TextView morn = findViewById(R.id.morningView);
         morn.setText(tempToText(tempDetails.getMorning()));
         TextView day = findViewById(R.id.dayView);
@@ -161,9 +168,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String formatDate(LocalDateTime ldt) {
+    private String formatDateTime(LocalDateTime ldt) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEE MMM dd h:mm a, yyyy",
                 Locale.getDefault());
+        return ldt.format(dtf);
+    }
+
+    private String formatTime(LocalDateTime ldt) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
         return ldt.format(dtf);
     }
 
