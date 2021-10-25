@@ -1,6 +1,8 @@
 package com.iit.pab.openweather.weather;
 
-public class WeatherDetails {
+import java.io.Serializable;
+
+public class WeatherDetails implements Serializable {
 
     private long id;
     private String main;

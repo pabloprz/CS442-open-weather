@@ -88,8 +88,8 @@ public class WeatherLoaderRunnable implements Runnable {
             JSONObject jObjMain = new JSONObject(s);
 
             // Info fields
-            weather.setLatitude(jObjMain.getDouble("lat"));
-            weather.setLongitude(jObjMain.getDouble("lon"));
+            weather.setLocation(new LocationDetails(location.getName(), jObjMain.getDouble("lat")
+                    , jObjMain.getDouble("lon")));
             weather.setTimezone(jObjMain.getString("timezone"));
 
             int offset = jObjMain.getInt("timezone_offset");

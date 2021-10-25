@@ -1,15 +1,17 @@
 package com.iit.pab.openweather.weather;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class HourlyDetails {
+public class HourlyDetails implements Serializable {
 
     private LocalDateTime dateTime;
     private Double temperature;
     private WeatherDetails details;
     private Double pop;
 
-    public HourlyDetails(LocalDateTime dateTime, Double temperature, WeatherDetails details, Double pop) {
+    public HourlyDetails(LocalDateTime dateTime, Double temperature, WeatherDetails details,
+                         Double pop) {
         this.dateTime = dateTime;
         this.temperature = temperature;
         this.details = details;

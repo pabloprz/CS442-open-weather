@@ -1,6 +1,8 @@
 package com.iit.pab.openweather.utils;
 
-public class LocationDetails {
+import java.io.Serializable;
+
+public class LocationDetails implements Serializable {
 
     private String name;
     private double latitude;

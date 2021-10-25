@@ -1,6 +1,8 @@
 package com.iit.pab.openweather.weather;
 
-public class TemperatureDetails {
+import java.io.Serializable;
+
+public class TemperatureDetails implements Serializable {
 
     private Double day;
     private Double night;

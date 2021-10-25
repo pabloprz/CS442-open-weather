@@ -1,13 +1,15 @@
 package com.iit.pab.openweather.weather;
 
+import com.iit.pab.openweather.utils.LocationDetails;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Weather {
+public class Weather implements Serializable {
 
-    private double latitude;
-    private double longitude;
+    private LocationDetails location;
 
     private String timezone;
     private int offset;
@@ -36,20 +38,12 @@ public class Weather {
     private List<HourlyDetails> hourlyDetails = new ArrayList<>();
     private List<DailyDetails> dailyDetails = new ArrayList<>();
 
-    public double getLatitude() {
-        return latitude;
+    public LocationDetails getLocation() {
+        return location;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLocation(LocationDetails location) {
+        this.location = location;
     }
 
     public String getTimezone() {

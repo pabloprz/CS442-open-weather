@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.daily_show) {
                 // Move to daily activity
                 Intent intent = new Intent(this, DailyForecastActivity.class);
+                intent.putExtra(getString(R.string.weather), weather);
                 startActivity(intent);
             } else if (item.getItemId() == R.id.location_change) {
                 openLocationDialog();
