@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.iit.pab.openweather.utils.DirectionUtils;
 import com.iit.pab.openweather.utils.LocationDetails;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Weather weather;
     private RecyclerView hourlyRecyclerView;
     private HourlyAdapter hourlyAdapter;
+    private SwipeRefreshLayout swiper;
 
     // TODO check all project exceptions
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         locationView = findViewById(R.id.locationView);
         dateTimeView = findViewById(R.id.dateTimeView);
+        swiper = findViewById(R.id.swiperefresh);
 
         weather = new Weather();
         hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this);
@@ -54,12 +57,12 @@ public class MainActivity extends AppCompatActivity {
         hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
 
+        swiper.setOnRefreshListener(this::reload);
+
         // TODO add settings
         this.chosenUnit = TempUnit.IMPERIAL;
 
-        checkNetworkConnection();
-
-        if (online) {
+        if (checkNetworkConnection()) {
             new Thread(new LocationLoaderRunnable("Chicago, IL", this)).start();
         }
     }
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC :
                         TempUnit.IMPERIAL;
                 changeIcon(item);
+                this.reload();
             } else if (item.getItemId() == R.id.daily_show) {
                 // Move to daily activity
                 Intent intent = new Intent(this, DailyForecastActivity.class);
@@ -91,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void reload() {
+        if (checkNetworkConnection() && location != null) {
+            this.weather.getHourlyDetails().clear();
+            this.weather.getDailyDetails().clear();
+            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit
+                    , weather);
+            new Thread(runnable).start();
+        }
     }
 
     public void updateData(Weather weather) {
@@ -128,9 +142,10 @@ public class MainActivity extends AppCompatActivity {
         TextView uvIndex = findViewById(R.id.uvIndexView);
         uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
 
+        // TODO check if conversion is needed from meters to miles
         TextView visibility = findViewById(R.id.visibilityView);
-        visibility.setText(String.format(Locale.getDefault(), "Visibility: %.1f",
-                weather.getVisibility()));
+        visibility.setText(String.format(Locale.getDefault(), "Visibility: %.1f %s",
+                weather.getVisibility(), getDistanceUnit()));
 
         TextView sunrise = findViewById(R.id.sunrise);
         sunrise.setText(String.format(Locale.getDefault(), "Sunrise: %s",
@@ -151,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         night.setText(tempToText(tempDetails.getNight()));
 
         hourlyAdapter.notifyDataSetChanged();
+        swiper.setRefreshing(false);
     }
 
     public String tempToText(double temp) {
@@ -163,11 +179,13 @@ public class MainActivity extends AppCompatActivity {
                         R.drawable.units_c));
     }
 
-    private void checkNetworkConnection() {
+    private boolean checkNetworkConnection() {
         online = hasNetworkConnection();
         if (!online) {
             dateTimeView.setText(R.string.no_connection);
         }
+
+        return online;
     }
 
     private boolean hasNetworkConnection() {
@@ -180,9 +198,7 @@ public class MainActivity extends AppCompatActivity {
         location = locationDetails;
         if (location != null) {
             locationView.setText(location.getName());
-            WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit
-                    , weather);
-            new Thread(runnable).start();
+            reload();
         } else {
             Toast.makeText(this, "Failed to load location info", Toast.LENGTH_SHORT).show();
         }
@@ -205,5 +221,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String getSpeedUnit() {
         return chosenUnit == TempUnit.IMPERIAL ? "mph" : "kmh";
+    }
+
+    private String getDistanceUnit() {
+        return chosenUnit == TempUnit.IMPERIAL ? "mi" : "m";
     }
 }
