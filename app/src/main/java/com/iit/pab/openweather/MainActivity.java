@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.iit.pab.openweather.utils.DirectionUtils;
 import com.iit.pab.openweather.utils.LocationDetails;
 import com.iit.pab.openweather.utils.LocationLoaderRunnable;
+import com.iit.pab.openweather.utils.SharedPrefUtils;
 import com.iit.pab.openweather.utils.TempUnit;
 import com.iit.pab.openweather.utils.WeatherLoaderRunnable;
 import com.iit.pab.openweather.weather.TemperatureDetails;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView hourlyRecyclerView;
     private HourlyAdapter hourlyAdapter;
     private SwipeRefreshLayout swiper;
+    private SharedPrefUtils sharedPrefs;
 
     // TODO check all project exceptions
 
@@ -59,18 +65,17 @@ public class MainActivity extends AppCompatActivity {
 
         swiper.setOnRefreshListener(this::reload);
 
-        // TODO add settings
-        this.chosenUnit = TempUnit.IMPERIAL;
-
-        if (checkNetworkConnection()) {
-            new Thread(new LocationLoaderRunnable("Chicago, IL", this)).start();
-        }
+        sharedPrefs = new SharedPrefUtils(this);
+        chosenUnit = sharedPrefs.getChosenUnit();
+        location = sharedPrefs.getLocation();
+        refreshLocationView(location.getName());
+        reload();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        changeIcon(menu.findItem(R.id.units_toggle));
+        changeUnitsIcon(menu.findItem(R.id.units_toggle));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -79,16 +84,17 @@ public class MainActivity extends AppCompatActivity {
         if (online) {
             if (item.getItemId() == R.id.units_toggle) {
                 // Toggle default unit
-                this.chosenUnit = this.chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC :
+                chosenUnit = chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC :
                         TempUnit.IMPERIAL;
-                changeIcon(item);
-                this.reload();
+                changeUnitsIcon(item);
+                reload();
+                sharedPrefs.saveChosenUnit(chosenUnit);
             } else if (item.getItemId() == R.id.daily_show) {
                 // Move to daily activity
                 Intent intent = new Intent(this, DailyForecastActivity.class);
                 startActivity(intent);
             } else if (item.getItemId() == R.id.location_change) {
-                // TODO Change location
+                openLocationDialog();
             }
         } else {
             Toast.makeText(this, R.string.not_available_offline, Toast.LENGTH_SHORT).show();
@@ -105,6 +111,26 @@ public class MainActivity extends AppCompatActivity {
                     , weather);
             new Thread(runnable).start();
         }
+    }
+
+    private void openLocationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final EditText et = new EditText(this);
+        et.setInputType(InputType.TYPE_CLASS_TEXT);
+        et.setGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setView(et);
+
+        builder.setPositiveButton("OK", (d, id) -> this.locationChanged(et.getText().toString()));
+        builder.setNegativeButton("NO WAY", (d, id) -> {
+        });
+
+        builder.setTitle("Enter a Location");
+        builder.setMessage("For US locations, enter as 'City' or 'City, State' \n\nFor " +
+                "international locations enter as 'City, Country'");
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void updateData(Weather weather) {
@@ -173,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         return String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), temp);
     }
 
-    private void changeIcon(MenuItem menuItem) {
+    private void changeUnitsIcon(MenuItem menuItem) {
         menuItem.setIcon(ContextCompat.getDrawable(this,
                 this.chosenUnit.equals(TempUnit.IMPERIAL) ? R.drawable.units_f :
                         R.drawable.units_c));
@@ -194,11 +220,18 @@ public class MainActivity extends AppCompatActivity {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
+    private void locationChanged(String newLocation) {
+        if (checkNetworkConnection()) {
+            new Thread(new LocationLoaderRunnable(newLocation, this)).start();
+        }
+    }
+
     public void locationDetailsArrived(LocationDetails locationDetails) {
         location = locationDetails;
         if (location != null) {
-            locationView.setText(location.getName());
+            refreshLocationView(location.getName());
             reload();
+            sharedPrefs.saveLocation(location);
         } else {
             Toast.makeText(this, "Failed to load location info", Toast.LENGTH_SHORT).show();
         }
@@ -225,5 +258,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String getDistanceUnit() {
         return chosenUnit == TempUnit.IMPERIAL ? "mi" : "m";
+    }
+
+    private void refreshLocationView(String locationName) {
+        locationView.setText(locationName);
     }
 }
