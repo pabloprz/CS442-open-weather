@@ -11,8 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dailyUvIndexView">
@@ -158,11 +160,11 @@
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popView"
+        app:layout_constraintTop_toBottomOf="@+id/dailyPopView"
         tools:text="UV Index: 2" />
 
     <TextView
-        android:id="@+id/popView"
+        android:id="@+id/dailyPopView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -174,7 +176,7 @@
         tools:text="(0% precip.)" />
 
     <ImageView
-        android:id="@+id/dailyIcon"
+        android:id="@+id/dailyIconImage"
         android:layout_width="140dp"
         android:layout_height="100dp"
         android:layout_marginTop="8dp"

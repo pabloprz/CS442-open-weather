@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.iit.pab.openweather.utils.DirectionUtils;
+import com.iit.pab.openweather.utils.FormattingUtils;
 import com.iit.pab.openweather.utils.HourlyElementOnClickListener;
 import com.iit.pab.openweather.utils.LocationDetails;
 import com.iit.pab.openweather.utils.LocationLoaderRunnable;
@@ -31,8 +32,6 @@ import com.iit.pab.openweather.utils.WeatherLoaderRunnable;
 import com.iit.pab.openweather.weather.TemperatureDetails;
 import com.iit.pab.openweather.weather.Weather;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,20 +57,21 @@ public class MainActivity extends AppCompatActivity {
         dateTimeView = findViewById(R.id.dateTimeView);
         swiper = findViewById(R.id.swiperefresh);
 
+        sharedPrefs = new SharedPrefUtils(this);
+        chosenUnit = sharedPrefs.getChosenUnit();
+        location = sharedPrefs.getLocation();
+
         weather = new Weather();
         hourlyRecyclerView = findViewById(R.id.hourlyView);
         hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this,
                 new HourlyElementOnClickListener(this, hourlyRecyclerView,
-                        weather.getHourlyDetails()));
+                        weather.getHourlyDetails()), chosenUnit);
         hourlyRecyclerView.setAdapter(hourlyAdapter);
         hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
 
         swiper.setOnRefreshListener(this::reload);
 
-        sharedPrefs = new SharedPrefUtils(this);
-        chosenUnit = sharedPrefs.getChosenUnit();
-        location = sharedPrefs.getLocation();
         refreshLocationView(location.getName());
         reload();
     }
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 // Move to daily activity
                 Intent intent = new Intent(this, DailyForecastActivity.class);
                 intent.putExtra(getString(R.string.weather), weather);
+                intent.putExtra(getString(R.string.chosenUnit), chosenUnit);
                 startActivity(intent);
             } else if (item.getItemId() == R.id.location_change) {
                 openLocationDialog();
@@ -147,17 +148,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView dateTime = findViewById(R.id.dateTimeView);
-        dateTime.setText(formatDateTime(weather.getDateTime()));
+        dateTime.setText(FormattingUtils.formatDateTime(weather.getDateTime()));
 
         TextView temp = findViewById(R.id.tempView);
-        temp.setText(tempToText(weather.getTemperature()));
+        temp.setText(FormattingUtils.tempToText(weather.getTemperature(), chosenUnit));
 
         ImageView currentIcon = findViewById(R.id.currentWeatherImage);
         currentIcon.setImageResource(getResources().getIdentifier("_" + weather.getDetails().getIcon(), "drawable", getPackageName()));
 
         TextView feelsLike = findViewById(R.id.feelsLikeView);
-        feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + getTempUnit(),
-                weather.getFeelsLike()));
+        feelsLike.setText(String.format(Locale.getDefault(),
+                "Feels Like %.0fº" + chosenUnit.getSymbol(), weather.getFeelsLike()));
 
         TextView description = findViewById(R.id.weatherDescriptionView);
         description.setText(String.format(Locale.getDefault(), "%s%s",
@@ -183,28 +184,24 @@ public class MainActivity extends AppCompatActivity {
 
         TextView sunrise = findViewById(R.id.sunrise);
         sunrise.setText(String.format(Locale.getDefault(), "Sunrise: %s",
-                formatTime(weather.getSunrise())));
+                FormattingUtils.formatTime(weather.getSunrise())));
 
         TextView sunset = findViewById(R.id.sunset);
         sunset.setText(String.format(Locale.getDefault(), "Sunset: %s",
-                formatTime(weather.getSunset())));
+                FormattingUtils.formatTime(weather.getSunset())));
 
         TemperatureDetails tempDetails = weather.getDailyDetails().get(0).getTemperature();
         TextView morn = findViewById(R.id.morningView);
-        morn.setText(tempToText(tempDetails.getMorning()));
+        morn.setText(FormattingUtils.tempToText(tempDetails.getMorning(), chosenUnit));
         TextView day = findViewById(R.id.dayView);
-        day.setText(tempToText(tempDetails.getDay()));
+        day.setText(FormattingUtils.tempToText(tempDetails.getDay(), chosenUnit));
         TextView eve = findViewById(R.id.eveningView);
-        eve.setText(tempToText(tempDetails.getEvening()));
+        eve.setText(FormattingUtils.tempToText(tempDetails.getEvening(), chosenUnit));
         TextView night = findViewById(R.id.nightView);
-        night.setText(tempToText(tempDetails.getNight()));
+        night.setText(FormattingUtils.tempToText(tempDetails.getNight(), chosenUnit));
         hourlyAdapter.notifyDataSetChanged();
 
         swiper.setRefreshing(false);
-    }
-
-    public String tempToText(double temp) {
-        return String.format(Locale.getDefault(), "%.0fº" + getTempUnit(), temp);
     }
 
     private void changeUnitsIcon(MenuItem menuItem) {
@@ -245,27 +242,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String formatDateTime(LocalDateTime ldt) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEE MMM dd h:mm a, yyyy",
-                Locale.getDefault());
-        return ldt.format(dtf);
-    }
-
-    public String formatTime(LocalDateTime ldt) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
-        return ldt.format(dtf);
-    }
-
-    private String getTempUnit() {
-        return chosenUnit == TempUnit.IMPERIAL ? "F" : "C";
-    }
-
     private String getSpeedUnit() {
         return chosenUnit == TempUnit.IMPERIAL ? "mph" : "kmh";
     }
 
     private String getDistanceUnit() {
         return chosenUnit == TempUnit.IMPERIAL ? "mi" : "m";
+    }
+
+    public TempUnit getChosenUnit() {
+        return chosenUnit;
     }
 
     private void refreshLocationView(String locationName) {

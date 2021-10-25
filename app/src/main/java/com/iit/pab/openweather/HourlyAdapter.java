@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.iit.pab.openweather.utils.FormattingUtils;
 import com.iit.pab.openweather.utils.HourlyElementOnClickListener;
+import com.iit.pab.openweather.utils.TempUnit;
 import com.iit.pab.openweather.weather.HourlyDetails;
 
 import java.time.LocalDateTime;
@@ -18,12 +20,14 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
     private final List<HourlyDetails> details;
     private final MainActivity mainActivity;
     private final HourlyElementOnClickListener listener;
+    private final TempUnit chosenUnit;
 
     public HourlyAdapter(List<HourlyDetails> details, MainActivity mainActivity,
-                         HourlyElementOnClickListener listener) {
+                         HourlyElementOnClickListener listener, TempUnit chosenUnit) {
         this.details = details;
         this.mainActivity = mainActivity;
         this.listener = listener;
+        this.chosenUnit = chosenUnit;
     }
 
     @NonNull
@@ -47,8 +51,8 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
             holder.day.setText(getDayOfWeek(item.getDateTime().getDayOfWeek().getValue()));
         }
 
-        holder.time.setText(mainActivity.formatTime(item.getDateTime()));
-        holder.temp.setText(mainActivity.tempToText(item.getTemperature()));
+        holder.time.setText(FormattingUtils.formatTime(item.getDateTime()));
+        holder.temp.setText(FormattingUtils.tempToText(item.getTemperature(), chosenUnit));
         holder.description.setText(String.format("%s%s",
                 Character.toUpperCase(item.getDetails().getDescription().charAt(0)),
                 item.getDetails().getDescription().substring(1)));

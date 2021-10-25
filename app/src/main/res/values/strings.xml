@@ -13,4 +13,5 @@
     <string name="prefsFile">PREFS_FILE</string>
     <string name="weather_icon">Weather icon</string>
     <string name="weather">weather</string>
+    <string name="chosenUnit">chosenUnit</string>
 </resources>
