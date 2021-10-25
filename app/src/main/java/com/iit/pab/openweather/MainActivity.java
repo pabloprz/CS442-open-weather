@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
         TextView uvIndex = findViewById(R.id.uvIndexView);
         uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
 
+        TextView visibility = findViewById(R.id.visibilityView);
+        visibility.setText(String.format(Locale.getDefault(), "Visibility: %.1f",
+                weather.getVisibility()));
+
         TextView sunrise = findViewById(R.id.sunrise);
         sunrise.setText(String.format(Locale.getDefault(), "Sunrise: %s",
                 formatTime(weather.getSunrise())));
@@ -179,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
             WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit
                     , weather);
             new Thread(runnable).start();
+        } else {
+            Toast.makeText(this, "Failed to load location info", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -109,6 +109,17 @@
         app:layout_constraintTop_toBottomOf="@+id/humidityView"
         tools:text="UV Index: 2" />
 
+    <TextView
+        android:id="@+id/visibilityView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/uvIndexView"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Visibility: 6.2 mi" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
@@ -255,9 +266,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hourlyView"
         android:layout_width="409dp"
-        android:layout_height="0dp"
+        android:layout_height="150dp"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="15dp"
+        android:background="#868EBF"
         app:layout_constraintBottom_toTopOf="@+id/sunset"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

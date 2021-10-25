@@ -44,7 +44,9 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
 
         holder.time.setText(mainActivity.formatTime(item.getDateTime()));
         holder.temp.setText(mainActivity.tempToText(item.getTemperature()));
-        holder.description.setText(item.getDetails().getDescription());
+        holder.description.setText(String.format("%s%s",
+                Character.toUpperCase(item.getDetails().getDescription().charAt(0)),
+                item.getDetails().getDescription().substring(1)));
     }
 
     @Override
@@ -56,25 +58,25 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
         String day = "";
         switch (value) {
             case 1:
-                day = "Sunday";
-                break;
-            case 2:
                 day = "Monday";
                 break;
-            case 3:
+            case 2:
                 day = "Tuesday";
                 break;
-            case 4:
+            case 3:
                 day = "Wednesday";
                 break;
-            case 5:
+            case 4:
                 day = "Thursday";
                 break;
-            case 6:
+            case 5:
                 day = "Friday";
                 break;
-            case 7:
+            case 6:
                 day = "Saturday";
+                break;
+            case 7:
+                day = "Sunday";
                 break;
         }
         return day;

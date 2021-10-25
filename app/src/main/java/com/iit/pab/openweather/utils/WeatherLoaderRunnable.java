@@ -120,11 +120,11 @@ public class WeatherLoaderRunnable implements Runnable {
                     , details.getString("description"), details.getString("icon")));
 
             if (isPresent(current, "rain")) {
-                weather.setRain(details.getJSONObject("rain").getDouble("1h"));
+                weather.setRain(current.getJSONObject("rain").getDouble("1h"));
             }
 
             if (isPresent(current, "snow")) {
-                weather.setRain(details.getJSONObject("snow").getDouble("1h"));
+                weather.setRain(current.getJSONObject("snow").getDouble("1h"));
             }
 
             // Hourly data
