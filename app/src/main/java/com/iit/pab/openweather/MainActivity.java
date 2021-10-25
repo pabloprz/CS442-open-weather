@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.iit.pab.openweather.utils.DirectionUtils;
+import com.iit.pab.openweather.utils.HourlyElementOnClickListener;
 import com.iit.pab.openweather.utils.LocationDetails;
 import com.iit.pab.openweather.utils.LocationLoaderRunnable;
 import com.iit.pab.openweather.utils.SharedPrefUtils;
@@ -57,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
         swiper = findViewById(R.id.swiperefresh);
 
         weather = new Weather();
-        hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this);
         hourlyRecyclerView = findViewById(R.id.hourlyView);
+        hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this,
+                new HourlyElementOnClickListener(this, hourlyRecyclerView,
+                        weather.getHourlyDetails()));
         hourlyRecyclerView.setAdapter(hourlyAdapter);
         hourlyRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));

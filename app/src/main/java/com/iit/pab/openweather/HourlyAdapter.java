@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.iit.pab.openweather.utils.HourlyElementOnClickListener;
 import com.iit.pab.openweather.weather.HourlyDetails;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,13 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
 
     private final List<HourlyDetails> details;
     private final MainActivity mainActivity;
+    private final HourlyElementOnClickListener listener;
 
-    public HourlyAdapter(List<HourlyDetails> details, MainActivity mainActivity) {
+    public HourlyAdapter(List<HourlyDetails> details, MainActivity mainActivity,
+                         HourlyElementOnClickListener listener) {
         this.details = details;
         this.mainActivity = mainActivity;
+        this.listener = listener;
     }
 
     @NonNull
@@ -28,6 +32,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
         View itemView =
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.hourly_weather_element,
                         parent, false);
+        itemView.setOnClickListener(listener);
 
         return new HourlyHolder(itemView);
     }
