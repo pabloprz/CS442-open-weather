@@ -11,4 +11,5 @@
     <string name="nightTime">11pm</string>
     <string name="today">Today</string>
     <string name="prefsFile">PREFS_FILE</string>
+    <string name="weather_icon">Weather icon</string>
 </resources>

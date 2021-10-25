@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="150dp"
-    android:layout_marginLeft="5dp"
+    android:layout_height="165dp"
+    android:layout_marginLeft="0dp"
     android:background="#868EBF">
 
     <androidx.constraintlayout.widget.Guideline
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="3dp" />
+        app:layout_constraintGuide_end="-8dp" />
 
     <TextView
         android:id="@+id/hourlyDay"
@@ -40,12 +40,12 @@
         android:id="@+id/hourlyTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="8dp"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hourlyDay"
+        app:layout_constraintTop_toBottomOf="@+id/hourlyIconImage"
         tools:text="76ºF" />
 
     <TextView
@@ -62,4 +62,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hourlyTemp"
         tools:text="Heavy intensity rain" />
+
+    <ImageView
+        android:id="@+id/hourlyIconImage"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hourlyTime" />
 </androidx.constraintlayout.widget.ConstraintLayout>

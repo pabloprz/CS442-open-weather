@@ -52,6 +52,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyHolder> {
         holder.description.setText(String.format("%s%s",
                 Character.toUpperCase(item.getDetails().getDescription().charAt(0)),
                 item.getDetails().getDescription().substring(1)));
+        holder.icon.setImageResource(mainActivity.getResources().getIdentifier("_" + item.getDetails().getIcon(), "drawable", mainActivity.getPackageName()));
     }
 
     @Override

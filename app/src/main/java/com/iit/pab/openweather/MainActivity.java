@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -150,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
         TextView temp = findViewById(R.id.tempView);
         temp.setText(tempToText(weather.getTemperature()));
 
+        ImageView currentIcon = findViewById(R.id.currentWeatherImage);
+        currentIcon.setImageResource(getResources().getIdentifier("_" + weather.getDetails().getIcon(), "drawable", getPackageName()));
+
         TextView feelsLike = findViewById(R.id.feelsLikeView);
         feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + getTempUnit(),
                 weather.getFeelsLike()));
@@ -193,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         eve.setText(tempToText(tempDetails.getEvening()));
         TextView night = findViewById(R.id.nightView);
         night.setText(tempToText(tempDetails.getNight()));
-
         hourlyAdapter.notifyDataSetChanged();
+
         swiper.setRefreshing(false);
     }
 
