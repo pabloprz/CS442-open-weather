@@ -40,11 +40,11 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyHolder> {
     public void onBindViewHolder(@NonNull DailyHolder holder, int position) {
         DailyDetails item = details.get(position);
 
-        holder.dateTimeView.setText(FormattingUtils.formatTime(item.getDateTime()));
+        holder.dateTimeView.setText(FormattingUtils.formatDate(item.getDateTime()));
         holder.tempView.setText(String.format(Locale.getDefault(), "%s/%s",
                 FormattingUtils.tempToText(item.getTemperature().getMaximum(), chosenUnit),
                 FormattingUtils.tempToText(item.getTemperature().getMinimum(), chosenUnit)));
-        holder.description.setText(item.getWeatherDetail().getDescription());
+        holder.description.setText(FormattingUtils.capitalize(item.getWeatherDetail().getDescription()));
         holder.popView.setText(String.format(Locale.getDefault(), "(%.2f%% precip.)",
                 item.getPop() * 100));
         holder.uv.setText(String.format(Locale.getDefault(), "UV Index: %.0f", item.getUvIndex()));

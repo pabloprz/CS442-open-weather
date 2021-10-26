@@ -127,8 +127,9 @@ public class MainActivity extends AppCompatActivity {
         et.setGravity(Gravity.CENTER_HORIZONTAL);
         builder.setView(et);
 
-        builder.setPositiveButton("OK", (d, id) -> this.locationChanged(et.getText().toString()));
-        builder.setNegativeButton("NO WAY", (d, id) -> {
+        builder.setPositiveButton(R.string.ok,
+                (d, id) -> this.locationChanged(et.getText().toString()));
+        builder.setNegativeButton(R.string.cancel, (d, id) -> {
         });
 
         builder.setTitle("Enter a Location");

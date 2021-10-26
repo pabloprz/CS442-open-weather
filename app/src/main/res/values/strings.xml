@@ -14,4 +14,6 @@
     <string name="weather_icon">Weather icon</string>
     <string name="weather">weather</string>
     <string name="chosenUnit">chosenUnit</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
 </resources>
