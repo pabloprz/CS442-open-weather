@@ -167,9 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 weather.getDetails().getDescription().substring(1)));
 
         TextView winds = findViewById(R.id.windsView);
-        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
-                DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(),
-                getSpeedUnit()));
+        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s", DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(), getSpeedUnit()));
 
         TextView humidity = findViewById(R.id.humidityView);
         humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%",
@@ -178,10 +176,11 @@ public class MainActivity extends AppCompatActivity {
         TextView uvIndex = findViewById(R.id.uvIndexView);
         uvIndex.setText(String.format(Locale.getDefault(), "UV Index: %.0f", weather.getUvIndex()));
 
-        // TODO check if conversion is needed from meters to miles
+        // Visibility is converted to miles (if chosen unit is imperial) or km (if metric)
+        // bc visibility data comes in metres
         TextView visibility = findViewById(R.id.visibilityView);
         visibility.setText(String.format(Locale.getDefault(), "Visibility: %.1f %s",
-                weather.getVisibility(), getDistanceUnit()));
+                getVisibilityInCurrentUnit(weather.getVisibility()), getDistanceUnit()));
 
         TextView sunrise = findViewById(R.id.sunrise);
         sunrise.setText(String.format(Locale.getDefault(), "Sunrise: %s",
@@ -257,5 +256,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshLocationView(String locationName) {
         locationView.setText(locationName);
+    }
+
+    private double getVisibilityInCurrentUnit(double metresVisibility) {
+        // If metric, transform meters to km. If imperial, transform meters to miles
+        return chosenUnit == TempUnit.METRIC ? metresVisibility / 1000 :
+                metresVisibility * 0.00062137;
     }
 }
