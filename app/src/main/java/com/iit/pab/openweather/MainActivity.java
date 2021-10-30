@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (online) {
+        if (checkNetworkConnection()) {
             if (item.getItemId() == R.id.units_toggle) {
                 // Toggle default unit
                 chosenUnit = chosenUnit.equals(TempUnit.IMPERIAL) ? TempUnit.METRIC :
@@ -116,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
             WeatherLoaderRunnable runnable = new WeatherLoaderRunnable(this, location, chosenUnit
                     , weather);
             new Thread(runnable).start();
+        } else {
+            Toast.makeText(this, "No connection", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -214,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
         online = hasNetworkConnection();
         if (!online) {
             dateTimeView.setText(R.string.no_connection);
+            swiper.setRefreshing(false);
         }
 
         return online;
