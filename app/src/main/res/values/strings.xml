@@ -16,4 +16,8 @@
     <string name="chosenUnit">chosenUnit</string>
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="location_info_failed">Failed to load location info</string>
+    <string name="invalid_city_name">Please Enter a Valid City Name</string>
+    <string name="location_info">For US locations, enter as \'City\' or \'City, State\' \n\nFor international locations enter as \'City, Country\'</string>
+    <string name="location_title">Enter a Location</string>
 </resources>

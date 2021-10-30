@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     , weather);
             new Thread(runnable).start();
         } else {
-            Toast.makeText(this, "No connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -134,9 +134,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.cancel, (d, id) -> {
         });
 
-        builder.setTitle("Enter a Location");
-        builder.setMessage("For US locations, enter as 'City' or 'City, State' \n\nFor " +
-                "international locations enter as 'City, Country'");
+        builder.setTitle(getString(R.string.location_title));
+        builder.setMessage(getString(R.string.location_info));
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         this.weather = weather;
 
         if (weather == null) {
-            Toast.makeText(this, "Please Enter a Valid City Name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_city_name), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -169,7 +168,9 @@ public class MainActivity extends AppCompatActivity {
                 weather.getDetails().getDescription().substring(1)));
 
         TextView winds = findViewById(R.id.windsView);
-        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s", DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(), getSpeedUnit()));
+        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
+                DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(),
+                getSpeedUnit()));
 
         TextView humidity = findViewById(R.id.humidityView);
         humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%",
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
             reload();
             sharedPrefs.saveLocation(location);
         } else {
-            Toast.makeText(this, "Failed to load location info", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.location_info_failed), Toast.LENGTH_SHORT).show();
         }
     }
 
