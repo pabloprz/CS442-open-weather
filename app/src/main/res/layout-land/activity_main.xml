@@ -56,6 +56,7 @@
                 android:layout_marginTop="8dp"
                 android:textColor="#FFFFFF"
                 android:textSize="50sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateTimeView"
                 tools:text="72ºF" />
@@ -283,7 +284,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/hourlyView"
                 android:layout_width="0dp"
-                android:layout_height="165dp"
+                android:layout_height="wrap_content"
                 android:background="#868EBF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
