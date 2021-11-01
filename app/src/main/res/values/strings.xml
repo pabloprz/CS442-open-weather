@@ -20,4 +20,6 @@
     <string name="invalid_city_name">Please Enter a Valid City Name</string>
     <string name="location_info">For US locations, enter as \'City\' or \'City, State\' \n\nFor international locations enter as \'City, Country\'</string>
     <string name="location_title">Enter a Location</string>
+    <string name="hourly_icon">Hourly icon</string>
+    <string name="daily_icon">Daily icon</string>
 </resources>

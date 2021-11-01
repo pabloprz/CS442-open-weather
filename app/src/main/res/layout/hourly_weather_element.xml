@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="4dp">
+    android:layout_marginStart="4dp">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -67,6 +67,7 @@
         android:id="@+id/hourlyIconImage"
         android:layout_width="50dp"
         android:layout_height="35dp"
+        android:contentDescription="@string/hourly_icon"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hourlyTime" />
