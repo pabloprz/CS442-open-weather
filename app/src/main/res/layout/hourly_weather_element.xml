@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="4dp"
-    android:background="#868EBF">
+    android:layout_marginLeft="4dp">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -18,6 +17,7 @@
         android:id="@+id/hourlyDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
+        android:textAlignment="center"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +40,7 @@
         android:id="@+id/hourlyTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintHorizontal_bias="0.52"
@@ -48,8 +50,8 @@
 
     <TextView
         android:id="@+id/hourlyDescription"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
+        android:layout_width="85dp"
+        android:layout_height="40dp"
         android:layout_marginTop="2dp"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
