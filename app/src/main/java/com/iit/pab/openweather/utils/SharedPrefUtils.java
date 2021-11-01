@@ -13,8 +13,8 @@ public class SharedPrefUtils {
     private static final String LON = "lon";
     private static final String CITY = "city";
     private static final String UNIT = "unit";
-    private static final String DEFAULT_LAT = "41.8781136";
-    private static final String DEFAULT_LON = "-87.6297982";
+    private static final String DEFAULT_LAT = "41.8675766";
+    private static final String DEFAULT_LON = "-87.616232";
     private static final String DEFAULT_CITY = "Chicago, Illinois";
 
     public SharedPrefUtils(Activity activity) {

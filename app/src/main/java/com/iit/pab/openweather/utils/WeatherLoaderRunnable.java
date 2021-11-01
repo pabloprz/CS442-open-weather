@@ -63,7 +63,7 @@ public class WeatherLoaderRunnable implements Runnable {
             connection.connect();
 
             if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
-                // Something went wrong
+                handleResults(null);
             }
 
             InputStream is = connection.getInputStream();
