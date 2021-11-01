@@ -42,12 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView locationView;
     private TextView dateTimeView;
     private Weather weather;
-    private RecyclerView hourlyRecyclerView;
     private HourlyAdapter hourlyAdapter;
     private SwipeRefreshLayout swiper;
     private SharedPrefUtils sharedPrefs;
-
-    // TODO check all project exceptions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         location = sharedPrefs.getLocation();
 
         weather = new Weather();
-        hourlyRecyclerView = findViewById(R.id.hourlyView);
+
+        RecyclerView hourlyRecyclerView = findViewById(R.id.hourlyView);
         hourlyAdapter = new HourlyAdapter(weather.getHourlyDetails(), this,
                 new HourlyElementOnClickListener(this, hourlyRecyclerView,
                         weather.getHourlyDetails()), chosenUnit);
@@ -159,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
         currentIcon.setImageResource(getResources().getIdentifier("_" + weather.getDetails().getIcon(), "drawable", getPackageName()));
 
         TextView feelsLike = findViewById(R.id.feelsLikeView);
-        feelsLike.setText(String.format(Locale.getDefault(),
-                "Feels Like %.0fº" + chosenUnit.getSymbol(), weather.getFeelsLike()));
+        feelsLike.setText(String.format(Locale.getDefault(), "Feels Like %.0fº" + chosenUnit.getSymbol(), weather.getFeelsLike()));
 
         TextView description = findViewById(R.id.weatherDescriptionView);
         description.setText(String.format(Locale.getDefault(), "%s%s",
@@ -168,9 +165,15 @@ public class MainActivity extends AppCompatActivity {
                 weather.getDetails().getDescription().substring(1)));
 
         TextView winds = findViewById(R.id.windsView);
-        winds.setText(String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
+        String windsText = String.format(Locale.getDefault(), "Winds: %S at %.0f %s",
                 DirectionUtils.getDirection(weather.getWindDegree()), weather.getWindSpeed(),
-                getSpeedUnit()));
+                getSpeedUnit());
+        winds.setText(windsText);
+
+        if (weather.getWindGust() != null) {
+            winds.setText(String.format(Locale.getDefault(), windsText.concat(", %.0f %s gust"),
+                    weather.getWindGust(), getSpeedUnit()));
+        }
 
         TextView humidity = findViewById(R.id.humidityView);
         humidity.setText(String.format(Locale.getDefault(), "Humidity: %.0f%%",
@@ -202,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
         eve.setText(FormattingUtils.tempToText(tempDetails.getEvening(), chosenUnit));
         TextView night = findViewById(R.id.nightView);
         night.setText(FormattingUtils.tempToText(tempDetails.getNight(), chosenUnit));
+
+        // We have to use notifyDataSetChanged because potentially all the elements may have changed
         hourlyAdapter.notifyDataSetChanged();
 
         swiper.setRefreshing(false);
